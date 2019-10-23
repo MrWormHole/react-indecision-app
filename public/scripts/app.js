@@ -105,7 +105,7 @@ var renderIndecisionApp = function renderIndecisionApp() {
   ReactDOM.render(template, appRoot);
 };
 
-//renderIndecisionApp();
+//renderIndecisionApp(); now we move to React.Component based ES6 class structure
 
 var IndecisionApp = function (_React$Component) {
   _inherits(IndecisionApp, _React$Component);
@@ -183,6 +183,11 @@ var Action = function (_React$Component3) {
   }
 
   _createClass(Action, [{
+    key: "handlePick",
+    value: function handlePick() {
+      alert("handlePick");
+    }
+  }, {
     key: "render",
     value: function render() {
       return React.createElement(
@@ -190,7 +195,7 @@ var Action = function (_React$Component3) {
         null,
         React.createElement(
           "button",
-          null,
+          { onClick: this.handlePick },
           " What Should I Do? "
         )
       );
@@ -203,13 +208,22 @@ var Action = function (_React$Component3) {
 var Options = function (_React$Component4) {
   _inherits(Options, _React$Component4);
 
-  function Options() {
+  function Options(props) {
     _classCallCheck(this, Options);
 
-    return _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).apply(this, arguments));
+    var _this4 = _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).call(this, props));
+
+    _this4.handleRemoveAll = _this4.handleRemoveAll.bind(_this4);
+    return _this4;
   }
 
   _createClass(Options, [{
+    key: "handleRemoveAll",
+    value: function handleRemoveAll() {
+      console.log(this.props.options);
+      //alert("handleRemoveAll");
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this5 = this;
@@ -217,6 +231,11 @@ var Options = function (_React$Component4) {
       return React.createElement(
         "div",
         null,
+        React.createElement(
+          "button",
+          { onClick: this.handleRemoveAll },
+          " Remove All "
+        ),
         React.createElement(
           "h5",
           null,
@@ -275,15 +294,30 @@ var AddOption = function (_React$Component6) {
   }
 
   _createClass(AddOption, [{
+    key: "handleAddOption",
+    value: function handleAddOption(e) {
+      e.preventDefault();
+      var option = e.target.elements.option.value.trim();
+      if (option) {
+        e.target.elements.option.value = "";
+        alert(option);
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       return React.createElement(
         "div",
         null,
         React.createElement(
-          "h5",
-          null,
-          " AddOption Component here "
+          "form",
+          { onSubmit: this.handleAddOption },
+          React.createElement("input", { type: "text", name: "option" }),
+          React.createElement(
+            "button",
+            null,
+            " Add Option "
+          )
         )
       );
     }
@@ -292,7 +326,7 @@ var AddOption = function (_React$Component6) {
   return AddOption;
 }(React.Component);
 
-ReactDOM.render(React.createElement(IndecisionApp, null), appRoot);
+//ReactDOM.render(<IndecisionApp/>,appRoot);
 
 /*const user = {
   userName: "Mike Tyson",
@@ -344,3 +378,84 @@ const renderCounterApp = () => {
 };
 
 renderCounterApp();*/
+
+var Counter = function (_React$Component7) {
+  _inherits(Counter, _React$Component7);
+
+  function Counter(props) {
+    _classCallCheck(this, Counter);
+
+    var _this8 = _possibleConstructorReturn(this, (Counter.__proto__ || Object.getPrototypeOf(Counter)).call(this, props));
+
+    _this8.handleAddOne = _this8.handleAddOne.bind(_this8);
+    _this8.handleMinusOne = _this8.handleMinusOne.bind(_this8);
+    _this8.handleReset = _this8.handleReset.bind(_this8);
+    _this8.state = {
+      count: 0
+    };
+    return _this8;
+  }
+
+  _createClass(Counter, [{
+    key: "handleAddOne",
+    value: function handleAddOne() {
+      this.setState(function (prevState) {
+        return {
+          count: prevState.count + 1
+        };
+      });
+    }
+  }, {
+    key: "handleMinusOne",
+    value: function handleMinusOne() {
+      this.setState(function (prevState) {
+        return {
+          count: prevState.count - 1
+        };
+      });
+    }
+  }, {
+    key: "handleReset",
+    value: function handleReset() {
+      this.setState(function () {
+        return {
+          count: 0
+        };
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "h1",
+          null,
+          " Count: ",
+          this.state.count,
+          " "
+        ),
+        React.createElement(
+          "button",
+          { onClick: this.handleAddOne },
+          " +1 "
+        ),
+        React.createElement(
+          "button",
+          { onClick: this.handleMinusOne },
+          " -1 "
+        ),
+        React.createElement(
+          "button",
+          { onClick: this.handleReset },
+          " reset "
+        )
+      );
+    }
+  }]);
+
+  return Counter;
+}(React.Component);
+
+ReactDOM.render(React.createElement(Counter, null), appRoot);

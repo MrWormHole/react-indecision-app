@@ -55,7 +55,7 @@ const renderIndecisionApp = () => {
   ReactDOM.render(template,appRoot);
 };
 
-//renderIndecisionApp();
+//renderIndecisionApp(); now we move to React.Component based ES6 class structure
 
 class IndecisionApp extends React.Component {
   render() {
@@ -86,19 +86,34 @@ class Header extends React.Component {
 }
 
 class Action extends React.Component {
+  handlePick(){
+    alert("handlePick");
+  }
+
   render() {
     return (
       <div>
-        <button> What Should I Do? </button>
+        <button onClick={this.handlePick}> What Should I Do? </button>
       </div>
     );
   }
 }
 
 class Options extends React.Component {
+  constructor(props){
+    super(props);
+    this.handleRemoveAll = this.handleRemoveAll.bind(this);
+  }
+
+  handleRemoveAll(){
+    console.log(this.props.options);
+    //alert("handleRemoveAll");
+  }
+
   render() {
     return (
       <div>
+        <button onClick={this.handleRemoveAll}> Remove All </button>
         <h5> {this.props.options.length} </h5>
         {
           this.props.options.map((option) => <Option key={this.props.options.indexOf(option)} optionText={option}/>)
@@ -120,16 +135,28 @@ class Option extends React.Component {
 }
 
 class AddOption extends React.Component {
+  handleAddOption(e){
+    e.preventDefault();
+    const option = e.target.elements.option.value.trim();
+    if(option){
+      e.target.elements.option.value = "";
+      alert(option);
+    }
+  }
+
   render() {
     return (
       <div>
-        <h5> AddOption Component here </h5>
+        <form onSubmit={this.handleAddOption}>
+          <input type="text" name="option"/>
+          <button> Add Option </button>
+        </form>
       </div>
     );
   }
 }
 
-ReactDOM.render(<IndecisionApp/>,appRoot);
+//ReactDOM.render(<IndecisionApp/>,appRoot);
 
 /*const user = {
   userName: "Mike Tyson",
@@ -181,3 +208,52 @@ const renderCounterApp = () => {
 };
 
 renderCounterApp();*/
+
+class Counter extends React.Component {
+  constructor(props){
+    super(props);
+    this.handleAddOne = this.handleAddOne.bind(this);
+    this.handleMinusOne = this.handleMinusOne.bind(this);
+    this.handleReset = this.handleReset.bind(this);
+    this.state = {
+      count: 0,
+    };
+  }
+
+  handleAddOne(){
+    this.setState((prevState) => {
+      return {
+        count: prevState.count + 1
+      };
+    });
+  }
+
+  handleMinusOne(){
+    this.setState((prevState) => {
+      return {
+        count: prevState.count - 1
+      };
+    })
+  }
+
+  handleReset(){
+    this.setState(() => {
+      return {
+        count: 0
+      };
+    })
+  }
+
+  render() {
+    return(
+      <div>
+        <h1> Count: {this.state.count} </h1>
+        <button onClick={this.handleAddOne}> +1 </button>
+        <button onClick={this.handleMinusOne}> -1 </button>
+        <button onClick={this.handleReset}> reset </button>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<Counter/>,appRoot);
