@@ -1,5 +1,4 @@
 let test = () => console.log("App.js is working from src directory");
-
 test();
 
 const app = {
@@ -24,16 +23,24 @@ const removeAll = () => {
   renderIndecisionApp();
 };
 
+const onMakeDecision = () => {
+  const randomNum = Math.floor(Math.random() * app.options.length);
+  const option = app.options[randomNum];
+  alert(option);
+};
+
 const appRoot = document.getElementById("app");
 
 const renderIndecisionApp = () => {
   const template = (
     <div>
      <h1> {app.title} </h1>
-     {app.subtitle && <p> {app.subtitle} </p>}
-     <button onClick={removeAll}> Remove All </button>
+     {
+       app.subtitle && <p> {app.subtitle} </p>
+     }
      <p> {app.options.length > 0 ? "Here are your options" : "No options"} </p>
-     <p> {app.options.length} </p>
+     <button onClick={removeAll}> Remove All </button>
+     <button disabled={app.options.length == 0} onClick={onMakeDecision}> What should i do? </button>
      <ol>
      {
        app.options.map((option) => <li key={app.options.indexOf(option)}> {option} </li>)
@@ -48,7 +55,81 @@ const renderIndecisionApp = () => {
   ReactDOM.render(template,appRoot);
 };
 
-renderIndecisionApp();
+//renderIndecisionApp();
+
+class IndecisionApp extends React.Component {
+  render() {
+    const title = "Indecision";
+    const subtitle = "Life is weird";
+    const options = ["Thing one","Thing two","Thing three","Thing four"];
+
+    return (
+      <div>
+        <Header title={title} subtitle={subtitle}/>
+        <Action/>
+        <Options options={options}/>
+        <AddOption/>
+      </div>
+    );
+  }
+}
+
+class Header extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1> {this.props.title} </h1>
+        <h2> {this.props.subtitle} </h2>
+      </div>
+    );
+  }
+}
+
+class Action extends React.Component {
+  render() {
+    return (
+      <div>
+        <button> What Should I Do? </button>
+      </div>
+    );
+  }
+}
+
+class Options extends React.Component {
+  render() {
+    return (
+      <div>
+        <h5> {this.props.options.length} </h5>
+        {
+          this.props.options.map((option) => <Option key={this.props.options.indexOf(option)} optionText={option}/>)
+          //this.props.options.map((option) => <p key={this.props.options.indexOf(option)}> {option} </p>)
+        }
+      </div>
+    );
+  }
+}
+
+class Option extends React.Component {
+  render() {
+    return (
+      <div>
+        <p> {this.props.optionText} </p>
+      </div>
+    );
+  }
+}
+
+class AddOption extends React.Component {
+  render() {
+    return (
+      <div>
+        <h5> AddOption Component here </h5>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<IndecisionApp/>,appRoot);
 
 /*const user = {
   userName: "Mike Tyson",
