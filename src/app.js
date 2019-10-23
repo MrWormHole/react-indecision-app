@@ -35,8 +35,9 @@ const renderIndecisionApp = () => {
      <p> {app.options.length > 0 ? "Here are your options" : "No options"} </p>
      <p> {app.options.length} </p>
      <ol>
-      <li> {app.options[0]} </li>
-      <li> {app.options[1]} </li>
+     {
+       app.options.map((option) => <li key={app.options.indexOf(option)}> {option} </li>)
+     }
      </ol>
      <form onSubmit={onFormSubmit}>
       <input type="text" name="option"/>
