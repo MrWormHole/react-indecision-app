@@ -1,74 +1,58 @@
 let test = () => console.log("App.js is working from src directory");
 test();
 
-const app = {
-  title: "Indecision App",
-  subtitle: "This is some info",
-  options: []
-};
-
-const onFormSubmit = (e) => {
-  e.preventDefault();
-  const option = e.target.elements.option.value;
-
-  if(option) {
-    app.options.push(option);
-    e.target.elements.option.value = "";
-    renderIndecisionApp();
-  }
-};
-
-const removeAll = () => {
-  app.options = [];
-  renderIndecisionApp();
-};
-
-const onMakeDecision = () => {
-  const randomNum = Math.floor(Math.random() * app.options.length);
-  const option = app.options[randomNum];
-  alert(option);
-};
-
 const appRoot = document.getElementById("app");
 
-const renderIndecisionApp = () => {
-  const template = (
-    <div>
-     <h1> {app.title} </h1>
-     {
-       app.subtitle && <p> {app.subtitle} </p>
-     }
-     <p> {app.options.length > 0 ? "Here are your options" : "No options"} </p>
-     <button onClick={removeAll}> Remove All </button>
-     <button disabled={app.options.length == 0} onClick={onMakeDecision}> What should i do? </button>
-     <ol>
-     {
-       app.options.map((option) => <li key={app.options.indexOf(option)}> {option} </li>)
-     }
-     </ol>
-     <form onSubmit={onFormSubmit}>
-      <input type="text" name="option"/>
-      <button> Add Option </button>
-     </form>
-    </div>
-  );
-  ReactDOM.render(template,appRoot);
-};
-
-//renderIndecisionApp(); now we move to React.Component based ES6 class structure
-
 class IndecisionApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
+    this.handleRandomPick = this.handleRandomPick.bind(this);
+    this.handleAddOption = this.handleAddOption.bind(this);
+    this.state = {
+      options: []
+    };
+  }
+
+  handleDeleteOptions() {
+    this.setState(() => {
+      return {
+        options: []
+      };
+    });
+  }
+
+  handleRandomPick() {
+    const randomIndex = Math.floor(Math.random() * this.state.options.length)
+    const option = this.state.options[randomIndex];
+    alert(option);
+  }
+
+  handleAddOption(option) {
+    if(!option) {
+      return "Enter valid value to add item!"; 
+    }
+    else if(this.state.options.indexOf(option) > -1) {
+      return "This option already exits!"
+    }
+
+    this.setState((prevState) => {
+      return {
+        options: prevState.options.concat([option])
+      };
+    });
+  }
+
   render() {
     const title = "Indecision";
     const subtitle = "Life is weird";
-    const options = ["Thing one","Thing two","Thing three","Thing four"];
 
     return (
       <div>
         <Header title={title} subtitle={subtitle}/>
-        <Action/>
-        <Options options={options}/>
-        <AddOption/>
+        <Action hasOptions={this.state.options.length > 0} handleRandomPick={this.handleRandomPick}/>
+        <Options options={this.state.options} handleDeleteOptions={this.handleDeleteOptions}/>
+        <AddOption handleAddOption={this.handleAddOption}/>
       </div>
     );
   }
@@ -86,38 +70,23 @@ class Header extends React.Component {
 }
 
 class Action extends React.Component {
-  handlePick(){
-    alert("handlePick");
-  }
-
   render() {
     return (
       <div>
-        <button onClick={this.handlePick}> What Should I Do? </button>
+        <button onClick={this.props.handleRandomPick} disabled={!this.props.hasOptions}> What Should I Do? </button>
       </div>
     );
   }
 }
 
 class Options extends React.Component {
-  constructor(props){
-    super(props);
-    this.handleRemoveAll = this.handleRemoveAll.bind(this);
-  }
-
-  handleRemoveAll(){
-    console.log(this.props.options);
-    //alert("handleRemoveAll");
-  }
-
   render() {
     return (
       <div>
-        <button onClick={this.handleRemoveAll}> Remove All </button>
+        <button onClick={this.props.handleDeleteOptions}> Remove All </button>
         <h5> {this.props.options.length} </h5>
         {
           this.props.options.map((option) => <Option key={this.props.options.indexOf(option)} optionText={option}/>)
-          //this.props.options.map((option) => <p key={this.props.options.indexOf(option)}> {option} </p>)
         }
       </div>
     );
@@ -135,18 +104,29 @@ class Option extends React.Component {
 }
 
 class AddOption extends React.Component {
+  constructor(props){
+    super(props);
+    this.handleAddOption = this.handleAddOption.bind(this);
+    this.state = {
+      error: undefined
+    };
+  }
   handleAddOption(e){
     e.preventDefault();
     const option = e.target.elements.option.value.trim();
-    if(option){
-      e.target.elements.option.value = "";
-      alert(option);
-    }
+    const error = this.props.handleAddOption(option);
+    e.target.elements.option.value = "";
+    this.setState(() => {
+      return {
+        error: error
+      };
+    });
   }
 
   render() {
     return (
       <div>
+        {this.state.error && <p> {this.state.error} </p>}
         <form onSubmit={this.handleAddOption}>
           <input type="text" name="option"/>
           <button> Add Option </button>
@@ -156,60 +136,9 @@ class AddOption extends React.Component {
   }
 }
 
-//ReactDOM.render(<IndecisionApp/>,appRoot);
+ReactDOM.render(<IndecisionApp/>,appRoot);
 
-/*const user = {
-  userName: "Mike Tyson",
-  userAge: 53,
-  userLocation: "New York"
-};
-
-let getLocation = (location) => {
-  if(location) {
-    return <p>Location: {location}</p>;
-  }
-  return undefined;
-};
-
-const templateTwo = (
-  <div>
-    <h1> Name: {user.userName ? user.userName : "Anonymous"} </h1>
-    {(user.userAge && user.userAge > 18) && <p> Age: {user.userAge} </p>}
-    {getLocation(user.userLocation)}
-  </div>
-);*/
-
-/*let count = 0;
-const addOne = () => {
-  count++;
-  renderCounterApp();
-};
-const minusOne = () => {
-  count--;
-  renderCounterApp();
-};
-const reset = () => {
-  count = 0;
-  renderCounterApp();
-};
-
-const appRoot = document.getElementById("app");
-
-const renderCounterApp = () => {
-    const templateTwo = (
-        <div>
-          <h1> Count: {count}</h1>
-          <button onClick={addOne} className="button"> +1 </button>
-          <button onClick={minusOne} className="button"> -1 </button>
-          <button onClick={reset} className="button"> Reset </button>
-        </div>
-    );
-    ReactDOM.render(templateTwo,appRoot);
-};
-
-renderCounterApp();*/
-
-class Counter extends React.Component {
+/*class Counter extends React.Component {
   constructor(props){
     super(props);
     this.handleAddOne = this.handleAddOne.bind(this);
@@ -256,4 +185,4 @@ class Counter extends React.Component {
   }
 }
 
-ReactDOM.render(<Counter/>,appRoot);
+ReactDOM.render(<Counter/>,appRoot);*/
