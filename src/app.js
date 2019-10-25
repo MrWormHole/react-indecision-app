@@ -1,3 +1,6 @@
+import React from "react";
+import ReactDOM from "react-dom";
+
 let test = () => console.log("App.js is working from src directory");
 test();
 
