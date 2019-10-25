@@ -5,18 +5,11 @@ import Header from "./Header";
 import Options from "./Options";
 
 export default class IndecisionApp extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
-    this.handleRandomPick = this.handleRandomPick.bind(this);
-    this.handleAddOption = this.handleAddOption.bind(this);
-    this.handleDeleteOption = this.handleDeleteOption.bind(this);
-    this.state = {
-      options: []
-    };
-  }
+  state = {
+    options: []
+  };
 
-  componentDidMount() {
+  componentDidMount = () => {
     console.log("componentDidMount!");
     const json = localStorage.getItem("options");
     if(json){
@@ -29,7 +22,7 @@ export default class IndecisionApp extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps,prevState) {
+  componentDidUpdate = (prevProps,prevState) => {
     console.log("componentDidUpdate!");
     if(prevState.options.length != this.state.options.length) {
       const json = JSON.stringify(this.state.options);
@@ -37,12 +30,12 @@ export default class IndecisionApp extends React.Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     console.log("haaaaah");
     //localStorage.clear(); //use this to wipe out local storage
   }
 
-  handleDeleteOptions() {
+  handleDeleteOptions = () => {
     this.setState(() => {
       return {
         options: []
@@ -50,7 +43,7 @@ export default class IndecisionApp extends React.Component {
     });
   }
 
-  handleDeleteOption(option) {
+  handleDeleteOption = (option) => {
     this.setState((prevState) => {
       return {
         options: prevState.options.filter((o) => option != o)
@@ -58,13 +51,13 @@ export default class IndecisionApp extends React.Component {
     });
   }
 
-  handleRandomPick() {
+  handleRandomPick = () => {
     const randomIndex = Math.floor(Math.random() * this.state.options.length)
     const option = this.state.options[randomIndex];
     alert(option);
   }
 
-  handleAddOption(option) {
+  handleAddOption = (option) => {
     if(!option) {
       return "Enter valid value to add item!";
     }
@@ -79,7 +72,7 @@ export default class IndecisionApp extends React.Component {
     });
   }
 
-  render() {
+  render = () => {
     const subtitle = "Life is weird";
 
     return (
